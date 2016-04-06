@@ -501,6 +501,11 @@ struct Dataset: public MldbEntity {
     /* In the case of a dataset with rows composed from other datasets (i.e., joins)
        This will return the name that the row has in the table with this alias*/
     virtual RowName getOriginalRowName(const Utf8String& tableName, const RowName & name) const;
+
+    /** Return whether or not we have unknown columns, ie they won't
+        be listed in getColumnCount().
+    */
+    virtual bool hasUnknownColumns() const;
 };
 
 

@@ -1767,6 +1767,13 @@ getOriginalRowName(const Utf8String& tableName, const RowName & name) const
     return name;
 }
 
+bool
+Dataset::
+hasUnknownColumns() const
+{
+    return false;
+}
+
 } // namespace MLDB
 } // namespace Datacratic
 

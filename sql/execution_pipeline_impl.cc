@@ -86,6 +86,38 @@ doGetAllColumns(std::function<Utf8String (const Utf8String &)> keep, int fieldOf
     std::vector<KnownColumn> columnsWithInfo;
     std::map<ColumnHash, ColumnName> index;
 
+    if (hasUnknownColumns) {
+        auto exec = [=] (const SqlRowScope & rowScope) -> ExpressionValue
+            {
+                auto & row = rowScope.as<PipelineResults>();
+
+                const ExpressionValue & rowContents
+                    = row.values.at(fieldOffset + ROW_CONTENTS);
+
+                StructValue result;
+
+                auto onSubexpression = [&] (const Coord & columnName,
+                                            const Coord & prefix,  // always null
+                                            const ExpressionValue & value)
+                {
+                    Utf8String newName = keep(columnName.toUtf8String());
+                    if (newName.empty())
+                        return true;
+                    result.emplace_back(newName, std::move(value));
+                    return true;
+                };
+                
+                rowContents.forEachSubexpression(onSubexpression);
+
+                return std::move(result);
+            };
+
+        GetAllColumnsOutput result;
+        result.info = std::make_shared<UnknownRowValueInfo>();
+        result.exec = exec;
+        return result;
+    }
+
     for (auto & column: knownColumns) {
         Utf8String outputName = keep(column.columnName.toUtf8String());
         if (outputName.empty())

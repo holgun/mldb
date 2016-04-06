@@ -349,8 +349,10 @@ doGetAllColumns(const Utf8String & tableName,
 
     size_t numColumns = dataset.getMatrixView()->getColumnCount();
 
-    if (numColumns > 1000000 || numColumns == 0) {
-        // Some are excluded or renamed; we need to go one by one
+    if (numColumns > 100000 || numColumns == 0
+        || dataset.hasUnknownColumns()) {
+
+        // We have dynamic columns, so we apply the filter at runtime
         auto exec = [=] (const SqlRowScope & context)
             {
                 auto & row = context.as<RowContext>();

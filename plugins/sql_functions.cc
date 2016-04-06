@@ -228,6 +228,7 @@ struct SqlQueryFunctionApplier: public FunctionApplier {
                                 (400, "Rows returned from NAMED_COLUMNS SQL "
                                  "query can only contain 'column' and 'value' "
                                  "columns",
+                                 "output", output->values.back(),
                                  "unknownColumn", col,
                                  "unknownColumnValue", val);
                         }

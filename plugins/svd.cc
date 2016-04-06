@@ -1012,7 +1012,7 @@ SvdEmbedRow(MldbServer * owner,
 {
     functionConfig = config.params.convert<SvdEmbedConfig>();
     svd = std::move(jsonDecodeFile<SvdBasis>(functionConfig.modelFileUrl.toString()));
-    svd.validate();
+    //svd.validate();
     
     nsv = functionConfig.maxSingularValues;
     if (nsv < 0 || nsv > svd.numSingularValues())

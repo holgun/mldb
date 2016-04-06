@@ -349,7 +349,7 @@ doGetAllColumns(const Utf8String & tableName,
 
     size_t numColumns = dataset.getMatrixView()->getColumnCount();
 
-    if (numColumns > 1000000) {
+    if (numColumns > 1000000 || numColumns == 0) {
         // Some are excluded or renamed; we need to go one by one
         auto exec = [=] (const SqlRowScope & context)
             {

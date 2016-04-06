@@ -2816,7 +2816,10 @@ bind(SqlBindingScope & context) const
 
             const ExpressionValue & v = boundExpr(rowScope, vstorage, filter);
 
-            std::pair<bool, Date> found = s.hasKey(v.toUtf8String());
+            if (v.empty())
+                return storage = v;
+
+            std::pair<bool, Date> found = s.hasKey(v.coerceToString().toUtf8String());
             
             if (found.first) {
                 return storage = std::move(ExpressionValue(!isnegative,

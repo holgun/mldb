@@ -108,7 +108,7 @@ bindSelectApplyFunctionExpression(std::shared_ptr<Function> function,
 
     ExtractContext extractContext(context.getMldbServer(), extractInfo);  
 
-    auto captureColumnName = [&] (const Utf8String & inputColumnName) -> Utf8String
+    auto captureColumnName = [] (const Utf8String & inputColumnName) -> Utf8String
         {
            return inputColumnName;
         };

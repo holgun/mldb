@@ -347,6 +347,33 @@ doGetAllColumns(const Utf8String & tableName,
         && tableName != alias)
         throw HttpReturnException(400, "Unknown dataset " + tableName);
 
+    size_t numColumns = dataset.getMatrixView()->getColumnCount();
+
+    if (numColumns > 1000000) {
+        // Some are excluded or renamed; we need to go one by one
+        auto exec = [=] (const SqlRowScope & context)
+            {
+                auto & row = context.as<RowContext>();
+
+                RowValue result;
+
+                for (auto & c: row.row.columns) {
+                    Utf8String newName = keep(std::get<0>(c).toUtf8String());
+                    if (newName.empty())
+                        continue;
+                
+                    result.emplace_back(newName, std::get<1>(c), std::get<2>(c));
+                }
+
+                return std::move(result);
+            };
+    
+        GetAllColumnsOutput result;
+        result.exec = exec;
+        result.info = std::make_shared<UnknownRowValueInfo>();
+        return result;
+    }
+
     auto columns = dataset.getMatrixView()->getColumnNames();
 
     auto filterColumnName = [&] (const Utf8String & inputColumnName)

@@ -3301,8 +3301,10 @@ bind(SqlBindingScope & context) const
         simplifiedPrefix = context.doResolveTableName(prefix, resolvedTableName);
 
     // This function figures out the new name of the column.  If it's excluded,
-    // then it returns the empty string
-    auto newColumnName = [&, simplifiedPrefix] (const Utf8String & inputColumnName) -> Utf8String
+    // then it returns the empty string.
+    // For lots of columns the lambda will outlive the object, so we don't
+    // pass anything by reference.
+    auto newColumnName = [=] (const Utf8String & inputColumnName) -> Utf8String
         {
             // First, check it matches the prefix
             if (!inputColumnName.startsWith(simplifiedPrefix))

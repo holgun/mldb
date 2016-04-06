@@ -1,5 +1,5 @@
 #
-# GLDB-800-nested_sql_query.py
+# MLDB-800-nested_sql_query.py
 # datacratic, 2015
 # this file is part of mldb. copyright 2015 datacratic. all rights reserved.
 #
@@ -92,5 +92,32 @@ mldb.log(res.json())
 res = mldb.get('/v1/datasets/ds1/query', select='poil2({*})')
 mldb.log("query result")
 mldb.log(res)
+
+
+
+res = mldb.put('/v1/functions/fwin', {
+    'type': 'sql.query',
+    'params': {
+        'query': 'select $varrr as hoho'
+    }
+})
+
+
+res = mldb.put('/v1/functions/pwel', {
+    'type': 'sql.query',
+    'params': {
+        'query': 'select fwin({varrr: $y}) from ds1 where rowName() = $x'
+    }
+})
+
+
+res = mldb.get('/v1/datasets/ds1/query', select="pwel({x:'row_2', y:'prout'})")
+mldb.log("ds1 query")
+mldb.log(res.json())
+
+
+
+
+
 
 mldb.script.set_return('success')
